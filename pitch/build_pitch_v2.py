@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Build RoboForeman 3-minute pitch deck v2 — minimal, storyline-driven."""
+"""Build RoboForeman 3-minute pitch deck v2 — minimal, Keynote-friendly PPTX.
+
+Keynote compatibility notes:
+- Mac-native fonts only (Helvetica Neue / Helvetica) — Calibri is Office-only
+- Plain rectangles instead of rounded-rect adjustments (import more reliably)
+- Standard 16:9 widescreen, embedded PNG assets, speaker notes preserved
+- Open in Keynote → File → Save to get a native .key on Mac
+"""
 
 from pathlib import Path
 
@@ -8,12 +15,14 @@ from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.oxml.ns import qn
-from pptx.util import Emu, Inches, Pt
+from pptx.util import Inches, Pt
 from lxml import etree
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "assets"
 OUT = ROOT / "RoboForeman-Pitch-3min-v2.pptx"
+# Alias filename so it's obvious this PPTX is meant for Keynote on Mac
+OUT_KEYNOTE = ROOT / "RoboForeman-Pitch-3min-v2.keynote.pptx"
 
 # ── Minimal palette (no purple) ─────────────────────────────────────────────
 INK = RGBColor(0x14, 0x14, 0x14)
@@ -32,8 +41,9 @@ BAD = RGBColor(0xA8, 0x3A, 0x2C)
 SLIDE_W = Inches(13.333)
 SLIDE_H = Inches(7.5)
 
-FONT_DISPLAY = "Georgia"
-FONT_BODY = "Calibri"
+# Mac-native fonts — Keynote maps these without substitution
+FONT_DISPLAY = "Helvetica Neue"
+FONT_BODY = "Helvetica"
 
 
 def set_run_font(run, size, bold=False, color=INK, font_name=FONT_BODY, italic=False):
@@ -133,24 +143,8 @@ def add_rect(slide, left, top, width, height, fill=None, line=None, line_width_p
 
 
 def add_round_rect(slide, left, top, width, height, fill=None, line=None, line_width_pt=1):
-    shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
-    shape.shadow.inherit = False
-    # tighter corner
-    try:
-        shape.adjustments[0] = 0.08
-    except Exception:
-        pass
-    if fill is None:
-        shape.fill.background()
-    else:
-        shape.fill.solid()
-        shape.fill.fore_color.rgb = fill
-    if line is None:
-        shape.line.fill.background()
-    else:
-        shape.line.color.rgb = line
-        shape.line.width = Pt(line_width_pt)
-    return shape
+    """Use a plain rectangle — Keynote imports these more reliably than adjusted rounded rects."""
+    return add_rect(slide, left, top, width, height, fill=fill, line=line, line_width_pt=line_width_pt)
 
 
 def fill_slide_bg(slide, color=BG):
@@ -668,7 +662,10 @@ def main():
     slide_7_close(prs)
 
     prs.save(OUT)
+    # Same bytes under a clearer Mac/Keynote-facing name
+    prs.save(OUT_KEYNOTE)
     print(f"Wrote {OUT}")
+    print(f"Wrote {OUT_KEYNOTE}")
 
 
 if __name__ == "__main__":
