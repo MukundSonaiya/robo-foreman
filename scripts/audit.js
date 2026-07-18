@@ -432,8 +432,14 @@ export function stackFindings(stack, prefs = {}) {
  * @param {number} [n]
  */
 export function topFixes(findings, n = 3) {
+  const seen = new Set();
   return findings
     .filter((f) => f.status !== "ok" && f.fixId)
     .sort((a, b) => (b.impact ?? 0) - (a.impact ?? 0))
+    .filter((f) => {
+      if (seen.has(f.fixId)) return false;
+      seen.add(f.fixId);
+      return true;
+    })
     .slice(0, n);
 }
