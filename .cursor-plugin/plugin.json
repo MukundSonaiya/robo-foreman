@@ -1,0 +1,32 @@
+{
+  "name": "robo-foreman",
+  "displayName": "Robo Foreman",
+  "version": "0.1.0",
+  "description": "Turn any project into an agentic-first workspace and contribute to open-source repos — site surveys, non-destructive builds, and a guided OSS ship flow.",
+  "author": {
+    "name": "Robo Foreman",
+    "email": "foreman@robo-foreman.dev"
+  },
+  "license": "MIT",
+  "keywords": [
+    "agentic",
+    "oss",
+    "scan",
+    "build",
+    "contribute",
+    "cursor-plugin",
+    "foreman"
+  ],
+  "category": "developer-tools",
+  "tags": [
+    "setup",
+    "rules",
+    "hooks",
+    "open-source"
+  ],
+  "logo": "assets/logo.svg",
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "commands": "./commands/",
+  "hooks": "./hooks/hooks.json"
+}
