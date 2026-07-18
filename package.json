@@ -10,7 +10,8 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "foreman": "node ./scripts/cli.js"
+    "foreman": "node ./scripts/cli.js",
+    "install:cursor": "node ./scripts/install-cursor-plugin.js"
   },
   "engines": {
     "node": ">=20"

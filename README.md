@@ -18,13 +18,18 @@ Exactly **three** commands:
 
 ### Local (hackathon / testing)
 
+Cursor loads local plugins from `~/.cursor/plugins/local/`. **Do not symlink** from outside that folder — Cursor rejects external symlink targets (`symlink target … is outside …/plugins/local`). Use the install script, which copies the plugin in:
+
 ```bash
 git clone <this-repo> ~/src/robo-foreman
-cd ~/src/robo-foreman && npm install && npm test
-ln -s ~/src/robo-foreman ~/.cursor/plugins/local/robo-foreman
+cd ~/src/robo-foreman
+npm install && npm test
+npm run install:cursor
 ```
 
 Reload Cursor (**Developer: Reload Window**). Confirm `/scan`, `/build`, `/contribute` under Agent `/` menu and Customize → Plugins.
+
+After you change this checkout, re-run `npm run install:cursor` so the copy under `~/.cursor/plugins/local/robo-foreman` stays in sync.
 
 ### Marketplace
 

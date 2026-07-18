@@ -177,12 +177,24 @@ Do **not** invent unsupported events (no mythical `preCommit` — use shell matc
 
 ### Local testing
 
+Cursor **rejects** local plugins whose path is a symlink pointing outside `~/.cursor/plugins/local` (pluginsSubsystem warning: `symlink target … is outside …/local`). Copy the plugin tree in instead of symlinking:
+
 ```bash
-ln -s /path/to/robo-foreman ~/.cursor/plugins/local/robo-foreman
+# From the robo-foreman checkout:
+npm run install:cursor
 # Restart Cursor or Developer: Reload Window
 ```
 
-Confirm rules/skills/commands appear under **Customize**. Official create-plugin skill defaults new scaffolds to this path.
+Or manually (same idea as the script):
+
+```bash
+mkdir -p ~/.cursor/plugins/local
+rm -rf ~/.cursor/plugins/local/robo-foreman
+rsync -a --exclude '.git' --exclude 'tests' --exclude 'docs' \
+  /path/to/robo-foreman/ ~/.cursor/plugins/local/robo-foreman/
+```
+
+Confirm rules/skills/commands appear under **Customize**. Official create-plugin skill still documents `~/.cursor/plugins/local/` as the install target — use a real directory there, not an external symlink.
 
 ### Submission
 

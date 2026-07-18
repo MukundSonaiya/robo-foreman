@@ -27,8 +27,9 @@
 ```bash
 npm test
 node scripts/cli.js scan --repo tests/fixtures/nextjs-legacy --no-write | head
-ln -sf "$(pwd)" ~/.cursor/plugins/local/robo-foreman
+npm run install:cursor
 # Reload Cursor → confirm /scan /build /contribute
+# (Do not symlink into ~/.cursor/plugins/local — Cursor rejects external symlink targets.)
 ```
 
 ## Single-plugin repo note
