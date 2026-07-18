@@ -1,36 +1,30 @@
-# Open in Keynote (Mac)
+# Open on Mac (Keynote)
 
-True `.key` files can only be **saved** by Keynote on a Mac. This repo ships a **Keynote-friendly `.pptx`** that opens cleanly, then you convert in one step.
+## Use this file
 
-## File to open
+**`RoboForeman-Pitch-Keynote.pptx`**
 
-Use either (same deck):
+(Do **not** use the older `*.keynote.pptx` name — download the file above.)
 
-- `RoboForeman-Pitch-3min-v2.keynote.pptx` ← prefer this name
-- `RoboForeman-Pitch-3min-v2.pptx`
+## Steps
 
-## Convert to native Keynote (30 seconds)
+1. Open the PR → `pitch/RoboForeman-Pitch-Keynote.pptx` → **Download**
+2. In Finder, right-click → **Open With → Keynote**  
+   (or drag onto the Keynote icon)
+3. **File → Save** to get a native `.key`
 
-1. Download the `.keynote.pptx` from the PR / repo.
-2. Double-click it (or right-click → **Open With → Keynote**).
-3. When Keynote asks about fonts / conversion, click **OK** / **Continue**.
-4. **File → Save** (or **File → Duplicate** then Save).
-5. Choose **Keynote** format — you now have `RoboForeman-Pitch-3min-v2.key`.
+## If Keynote still says “file format is invalid”
 
-That’s the file to present and share with the team.
+Use the PDF instead (always works on Mac):
 
-## Tips while reviewing
+1. Download `RoboForeman-Pitch-Keynote.pdf`
+2. Open in **Preview**, or drag into Keynote (**File → Open**)
 
-- **Speaker notes:** View → Show Presenter Notes  
-- **Play:** play button / ⌥⌘P  
-- **Demo slide (4):** replace the placeholder with your video — Insert → Choose… (or drag the `.mp4` onto the frame)
+Or:
 
-## What we optimized for Keynote
+- Upload the `.pptx` to [Google Slides](https://slides.google.com) → File → Open → Upload
+- Or open in **PowerPoint for Mac** if installed
 
-- Mac-native fonts: **Helvetica Neue** + **Helvetica** (no Calibri)
-- Simple rectangles (no rounded-rect adjustment quirks)
-- Standard 16:9 widescreen + PNG assets + speaker notes
+## Speaker notes
 
-## Sharing feedback
-
-Comment on the PR by slide number, or annotate in Keynote and export notes — then paste bullets here / on the PR.
+In Keynote: **View → Show Presenter Notes**

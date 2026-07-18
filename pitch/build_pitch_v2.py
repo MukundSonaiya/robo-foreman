@@ -21,8 +21,8 @@ from lxml import etree
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "assets"
 OUT = ROOT / "RoboForeman-Pitch-3min-v2.pptx"
-# Alias filename so it's obvious this PPTX is meant for Keynote on Mac
-OUT_KEYNOTE = ROOT / "RoboForeman-Pitch-3min-v2.keynote.pptx"
+# Simple name for Mac — avoid *.keynote.pptx (can confuse downloads / UTIs)
+OUT_KEYNOTE = ROOT / "RoboForeman-Pitch-Keynote.pptx"
 
 # ── Minimal palette (no purple) ─────────────────────────────────────────────
 INK = RGBColor(0x14, 0x14, 0x14)
@@ -128,7 +128,6 @@ def set_text(shape, lines, *, default_size=18, default_bold=False, default_color
 
 def add_rect(slide, left, top, width, height, fill=None, line=None, line_width_pt=1):
     shape = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, width, height)
-    shape.shadow.inherit = False
     if fill is None:
         shape.fill.background()
     else:
@@ -648,10 +647,51 @@ Can we fix your repo? Yes we can. Thank you.""",
     )
 
 
+def fix_widescreen_sldsz(prs):
+    """python-pptx leaves type='screen4x3' even after resizing — Keynote rejects that mismatch."""
+    sldSz = prs.part._element.find(
+        "{http://schemas.openxmlformats.org/presentationml/2006/main}sldSz"
+    )
+    if sldSz is not None:
+        sldSz.set("cx", str(int(SLIDE_W)))
+        sldSz.set("cy", str(int(SLIDE_H)))
+        sldSz.set("type", "screen16x9")
+
+
+def sanitize_via_libreoffice(src: Path, dest: Path) -> bool:
+    """Round-trip through LibreOffice for a stricter OOXML Keynote accepts."""
+    import shutil
+    import subprocess
+    import tempfile
+
+    if not shutil.which("soffice"):
+        return False
+    with tempfile.TemporaryDirectory() as td:
+        td_path = Path(td)
+        result = subprocess.run(
+            ["soffice", "--headless", "--convert-to", "pptx", "--outdir", str(td_path), str(src)],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            print("LibreOffice sanitize failed:", result.stderr)
+            return False
+        produced = next(td_path.glob("*.pptx"), None)
+        if not produced:
+            return False
+        # Re-apply widescreen type after LO (it drops type entirely — also fine,
+        # but screen16x9 is explicit and Keynote-friendly)
+        prs = Presentation(str(produced))
+        fix_widescreen_sldsz(prs)
+        prs.save(str(dest))
+        return True
+
+
 def main():
     prs = Presentation()
     prs.slide_width = SLIDE_W
     prs.slide_height = SLIDE_H
+    fix_widescreen_sldsz(prs)
 
     slide_1_title(prs)
     slide_2_pain(prs)
@@ -662,10 +702,23 @@ def main():
     slide_7_close(prs)
 
     prs.save(OUT)
-    # Same bytes under a clearer Mac/Keynote-facing name
-    prs.save(OUT_KEYNOTE)
     print(f"Wrote {OUT}")
-    print(f"Wrote {OUT_KEYNOTE}")
+
+    # Keynote build: LibreOffice-sanitized OOXML (fixes invalid format errors)
+    if sanitize_via_libreoffice(OUT, OUT_KEYNOTE):
+        print(f"Wrote Keynote-safe {OUT_KEYNOTE}")
+    else:
+        # Fallback: same file with sldSz already fixed
+        prs.save(OUT_KEYNOTE)
+        print(f"Wrote {OUT_KEYNOTE} (no LibreOffice sanitize)")
+
+    # Verify
+    check = Presentation(str(OUT_KEYNOTE))
+    sldSz = check.part._element.find(
+        "{http://schemas.openxmlformats.org/presentationml/2006/main}sldSz"
+    )
+    print(f"Verified sldSz: {dict(sldSz.attrib) if sldSz is not None else None}")
+    print(f"Slides: {len(check.slides)}")
 
 
 if __name__ == "__main__":
