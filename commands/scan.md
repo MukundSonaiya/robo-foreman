@@ -1,6 +1,6 @@
 ---
 name: scan
-description: Run a Robo Foreman site survey — preferences questionnaire (first run), stack detection, Cursor setup audit, and a detailed checklist report with no letter grades.
+description: Run a Robo Foreman site survey — context-aware preferences (AskQuestion), stack detection, Cursor setup audit, and a detailed checklist report with no letter grades.
 ---
 
 # /scan — site survey

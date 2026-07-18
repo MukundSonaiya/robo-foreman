@@ -37,14 +37,16 @@ When listed: install **Robo Foreman** from the Cursor Marketplace (Customize →
 
 ## Preference system
 
-First `/scan` asks:
+First `/scan` runs a **context-aware** questionnaire (Cursor **AskQuestion** pickers — not freeform “github / npm / fun” replies):
 
-1. VCS — GitHub / GitLab / Bitbucket / other  
+1. VCS — GitHub / GitLab / Bitbucket / other (prompt includes git remote hint when detected)  
 2. Issues — GitHub Issues / Jira / Linear / Trello / none  
-3. Package manager (if lockfiles conflict)  
+3. Package manager — **only if lockfiles conflict**; options filtered to the stack (e.g. Python → pip / uv / poetry)  
 4. Vibe — fun or boring  
 
 Saved to `.foreman/preferences.json` (local only — git-ignored / exclude-listed). Say **redo** on a later scan to re-run. Prefs drive `gh` vs `glab`, MCP suggestions (Atlassian / Linear / GitLab), and copy tone.
+
+Optional web hints: set `EXA_API_KEY` in your environment before `/scan` to soft-enrich VCS/issue suggestions via [Exa](https://exa.ai). Local lockfile/manifest detection always wins for package manager.
 
 ## Architecture
 

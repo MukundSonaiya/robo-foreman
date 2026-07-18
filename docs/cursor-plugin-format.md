@@ -316,12 +316,14 @@ robo-foreman/                          # single-plugin repo root
 
 ### 7.1 Preference gate (first run)
 
-Before scanning, if `.foreman/preferences.json` is missing, ask:
+Before scanning, if `.foreman/preferences.json` is missing, run a **context-aware** questionnaire (AskQuestion pickers — not freeform slash replies):
 
-1. Version control platform — `github` | `gitlab` | `bitbucket` | `other`
+1. Version control platform — `github` | `gitlab` | `bitbucket` | `other` (prompt includes git remote hint when detected)
 2. Issue management — `github-issues` | `jira` | `linear` | `trello` | `none`
-3. Package manager — only if lockfiles are ambiguous (`npm`/`pnpm`/`yarn`/`bun`/`pip`/`uv`/`poetry`/`cargo`/…)
+3. Package manager — **only if ambiguous**; options filtered to the detected stack (Python → pip/uv/poetry; Node → npm/pnpm/yarn/bun). Clear single lockfile → auto-fill, skip question.
 4. Vibe — `fun` (default, hard-hat emojis) | `boring` (professional copy)
+
+Optional: when `EXA_API_KEY` is set, soft-enrich VCS/issue suggestions via Exa. Local detect always wins for package manager.
 
 Persist to `.foreman/preferences.json` (gitignored / exclude-listed). Later runs: load prefs; offer “redo questionnaire” as a scan option.
 

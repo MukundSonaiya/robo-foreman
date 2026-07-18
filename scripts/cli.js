@@ -8,10 +8,18 @@
  *   node scripts/cli.js scan [--repo .] [--write]
  *   node scripts/cli.js build-plan [--repo .]
  *   node scripts/cli.js exclude [--repo .] [--oss]
+ *
+ * Questionnaire is context-aware (detect + git remote). Optional EXA_API_KEY soft-enriches VCS/issue hints.
  */
 
 import path from "node:path";
-import { loadPreferences, savePreferences, needsQuestionnaire, questionnaireCopy, toolingHints } from "./preferences.js";
+import {
+  loadPreferences,
+  savePreferences,
+  needsQuestionnaire,
+  toolingHints,
+  buildQuestionnairePayload,
+} from "./preferences.js";
 import { generateReport } from "./report.js";
 import { planBuild } from "./build-plan.js";
 import { ensureGitExclude } from "./git-exclude.js";
@@ -39,12 +47,18 @@ async function main() {
     const force = hasFlag(args, "--force") || hasFlag(args, "--redo");
     const need = await needsQuestionnaire(repo, { force });
     const vibe = prefs?.vibe || "fun";
+    const payload = await buildQuestionnairePayload(repo, { vibe });
     console.log(
       JSON.stringify(
         {
           needsQuestionnaire: need,
           existing: prefs,
-          copy: questionnaireCopy(vibe),
+          context: payload.context,
+          defaults: payload.defaults,
+          copy: payload.copy,
+          questions: payload.questions,
+          ux: payload.ux,
+          enrichment: payload.enrichment,
           tooling: prefs ? toolingHints(prefs) : null,
         },
         null,
