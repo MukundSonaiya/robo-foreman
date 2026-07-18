@@ -20,15 +20,25 @@ node ${CURSOR_PLUGIN_ROOT}/scripts/cli.js scan --repo <repo>
 
 If `CURSOR_PLUGIN_ROOT` is unset during local dev, run `node scripts/cli.js …` from the Robo Foreman checkout.
 
+Optional: if `EXA_API_KEY` is set in the environment, the questionnaire CLI soft-enriches VCS/issue hints via Exa. Local lockfile/manifest detect always wins for package manager.
+
 ## Workflow
 
 ### 1. Preference check (first run / redo)
 
-1. Run `preferences questionnaire`.
+1. Run `preferences questionnaire` (includes stack context + filtered questions).
 2. If `needsQuestionnaire` is true (or user said **redo**):
-   - Present `copy.questions` using fun or boring copy.
-   - Wait for answers, then `preferences save --json '{...}'`.
-3. If prefs exist, show a one-line summary and offer redo.
+   - Show a one-line context from `context.summary` (e.g. `Detected: python · uv.lock · remote→github`).
+   - **Silently apply `defaults`** (e.g. unambiguous `packageManager`) — do not ask for those.
+   - For each entry in `questions` (or `copy.questions`), ask with **AskQuestion**:
+     - One question per turn (`ux.onePerTurn`)
+     - Use `options[].id` / `options[].label` as the choices
+     - `allowMultiple: false` for all pref questions
+     - Prefer `suggested` as the default selection when the tool supports it
+   - **Never** ask the user to reply with a freeform slash-separated string like `github / github-issues / npm / fun`.
+   - If AskQuestion is unavailable, fall back to a short numbered list using the same filtered options.
+   - Merge `{ ...defaults, ...answers }` then `preferences save --json '{...}'`.
+3. If prefs exist, show a one-line summary and offer redo (AskQuestion: keep / redo).
 
 ### 2. Parallel survey
 
@@ -58,3 +68,4 @@ If auth/API surface is flagged, suggest **`security-checker`** (ask first).
 - Only write under `.foreman/` during scan.
 - Do not invent scores.
 - Friendly Gen Z foreman tone unless boring mode.
+- Do not invent package-manager options outside the CLI `questions` payload.

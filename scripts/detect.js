@@ -174,12 +174,11 @@ export async function detectStack(repoRoot) {
   if (await FILE_EXISTS(repoRoot, "src/app/api")) signals.apiRoutes = true;
 
   const pmList = [...packageManagers];
-  const nodePms = pmList.filter((p) => ["npm", "pnpm", "yarn", "bun"].includes(p));
-  const packageManagerAmbiguous = nodePms.length > 1;
-  let preferredPackageManager = null;
-  if (nodePms.length === 1) preferredPackageManager = nodePms[0];
-  else if (pmList.length === 1) preferredPackageManager = pmList[0];
-  else if (signals.packageManagerField) preferredPackageManager = signals.packageManagerField;
+  const resolved = resolvePackageManagerPreference({
+    packageManagers: pmList,
+    lockfiles,
+    packageManagerField: signals.packageManagerField || null,
+  });
 
   const scripts =
     pkg && !pkg.__parseError && pkg.scripts && typeof pkg.scripts === "object"
@@ -190,14 +189,63 @@ export async function detectStack(repoRoot) {
     languages: [...languages].sort(),
     frameworks: [...frameworks].sort(),
     packageManagers: pmList.sort(),
-    preferredPackageManager,
-    packageManagerAmbiguous,
+    preferredPackageManager: resolved.preferredPackageManager,
+    packageManagerAmbiguous: resolved.packageManagerAmbiguous,
     manifests,
     lockfiles,
     packageJson: pkg && !pkg.__parseError ? pkg : null,
     scripts,
     signals,
   };
+}
+
+export const NODE_PACKAGE_MANAGERS = Object.freeze(["npm", "pnpm", "yarn", "bun"]);
+export const PYTHON_PACKAGE_MANAGERS = Object.freeze(["pip", "uv", "poetry", "pipenv"]);
+
+/**
+ * Prefer lockfile signals; treat multi-Node or multi-Python PMs as ambiguous.
+ * @param {{ packageManagers: string[], lockfiles: string[], packageManagerField?: string | null }} input
+ */
+export function resolvePackageManagerPreference(input) {
+  const pmList = [...new Set(input.packageManagers || [])];
+  const lockfiles = input.lockfiles || [];
+  const field = input.packageManagerField || null;
+
+  const lockfilePms = [];
+  for (const { file, pm } of LOCKFILE_TO_PM) {
+    if (lockfiles.includes(file) && !lockfilePms.includes(pm)) lockfilePms.push(pm);
+  }
+
+  const nodePms = pmList.filter((p) => NODE_PACKAGE_MANAGERS.includes(p));
+  const pythonPms = pmList.filter((p) => PYTHON_PACKAGE_MANAGERS.includes(p));
+  const otherPms = pmList.filter(
+    (p) => !NODE_PACKAGE_MANAGERS.includes(p) && !PYTHON_PACKAGE_MANAGERS.includes(p),
+  );
+
+  const ecosystemAmbiguous = nodePms.length > 1 || pythonPms.length > 1;
+  let preferredPackageManager = null;
+
+  if (lockfilePms.length === 1) {
+    preferredPackageManager = lockfilePms[0];
+  } else if (!ecosystemAmbiguous && pmList.length === 1) {
+    preferredPackageManager = pmList[0];
+  } else if (!ecosystemAmbiguous && nodePms.length === 1 && pythonPms.length === 0 && otherPms.length === 0) {
+    preferredPackageManager = nodePms[0];
+  } else if (!ecosystemAmbiguous && pythonPms.length === 1 && nodePms.length === 0 && otherPms.length === 0) {
+    preferredPackageManager = pythonPms[0];
+  } else if (!ecosystemAmbiguous && field && pmList.includes(field)) {
+    preferredPackageManager = field;
+  } else if (!ecosystemAmbiguous && otherPms.length === 1 && nodePms.length === 0 && pythonPms.length === 0) {
+    preferredPackageManager = otherPms[0];
+  }
+
+  // Ambiguous when multiple lockfile PMs, or soft-signal conflicts with no lockfile winner
+  const packageManagerAmbiguous =
+    lockfilePms.length > 1 ||
+    (lockfilePms.length === 0 && ecosystemAmbiguous) ||
+    (lockfilePms.length === 0 && pmList.length > 1 && preferredPackageManager === null);
+
+  return { preferredPackageManager, packageManagerAmbiguous, lockfilePms, nodePms, pythonPms };
 }
 
 /**

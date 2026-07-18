@@ -32,6 +32,8 @@ describe("detectStack", () => {
     expect(stack.languages).toContain("python");
     expect(stack.frameworks).toContain("fastapi");
     expect(stack.packageManagers).toContain("uv");
+    expect(stack.preferredPackageManager).toBe("uv");
+    expect(stack.packageManagerAmbiguous).toBe(false);
     expect(pickTemplateId(stack)).toBe("python");
   });
 

@@ -9,10 +9,19 @@ import {
   needsQuestionnaire,
   toolingHints,
   questionnaireCopy,
+  buildQuestionnaire,
+  packageManagerOptionsForStack,
   defaultPreferences,
   VCS_PLATFORMS,
 } from "./preferences.js";
 import { preferencesPath } from "./lib/paths.js";
+import { classifyRemoteUrl, repoNameFromRemote } from "./git-remote.js";
+import { enrichWithExa } from "./exa-enrich.js";
+import { resolvePackageManagerPreference } from "./detect.js";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const fixtures = path.join(__dirname, "..", "tests", "fixtures");
 
 describe("validatePreferences", () => {
   it("accepts a full valid payload", () => {
@@ -164,12 +173,111 @@ describe("questionnaireCopy", () => {
     const copy = questionnaireCopy("fun");
     expect(copy.title).toMatch(/Hard-hat|🚧/);
     expect(copy.questions).toHaveLength(4);
-    expect(copy.questions[0].options).toEqual([...VCS_PLATFORMS]);
+    expect(copy.questions[0].options.map((o) => o.id)).toEqual([...VCS_PLATFORMS]);
   });
 
   it("returns boring professional copy", () => {
     const copy = questionnaireCopy("boring");
     expect(copy.title).toBe("Foreman preferences");
     expect(copy.intro).not.toMatch(/🚧/);
+  });
+});
+
+describe("resolvePackageManagerPreference", () => {
+  it("prefers a single lockfile over soft python signals", () => {
+    const r = resolvePackageManagerPreference({
+      packageManagers: ["uv", "pip"],
+      lockfiles: ["uv.lock"],
+    });
+    expect(r.preferredPackageManager).toBe("uv");
+    expect(r.packageManagerAmbiguous).toBe(false);
+  });
+
+  it("flags multiple node lockfiles as ambiguous", () => {
+    const r = resolvePackageManagerPreference({
+      packageManagers: ["npm", "pnpm"],
+      lockfiles: ["package-lock.json", "pnpm-lock.yaml"],
+    });
+    expect(r.packageManagerAmbiguous).toBe(true);
+  });
+
+  it("flags soft python conflicts without lockfile", () => {
+    const r = resolvePackageManagerPreference({
+      packageManagers: ["poetry", "uv"],
+      lockfiles: [],
+    });
+    expect(r.packageManagerAmbiguous).toBe(true);
+  });
+});
+
+describe("packageManagerOptionsForStack", () => {
+  it("returns python PMs for python-only", () => {
+    const opts = packageManagerOptionsForStack({ languages: ["python"], packageManagers: ["uv"] });
+    expect(opts).toEqual(expect.arrayContaining(["pip", "uv", "poetry", "other"]));
+    expect(opts).not.toContain("npm");
+  });
+
+  it("returns node PMs for javascript", () => {
+    const opts = packageManagerOptionsForStack({
+      languages: ["javascript", "typescript"],
+      packageManagers: ["pnpm", "npm"],
+    });
+    expect(opts).toEqual(expect.arrayContaining(["npm", "pnpm", "yarn", "bun", "other"]));
+    expect(opts).not.toContain("pip");
+  });
+});
+
+describe("buildQuestionnaire", () => {
+  it("auto-fills uv for python-fastapi and omits PM question", async () => {
+    const q = await buildQuestionnaire(path.join(fixtures, "python-fastapi"), { vibe: "fun" });
+    expect(q.defaults.packageManager).toBe("uv");
+    expect(q.questions.find((x) => x.id === "packageManager")).toBeUndefined();
+    expect(q.questions.map((x) => x.id)).toEqual(["vcs", "issues", "vibe"]);
+    expect(q.ux.mode).toBe("ask-question");
+    expect(q.context.languages).toContain("python");
+  });
+
+  it("asks filtered node PM question when lockfiles conflict", async () => {
+    const q = await buildQuestionnaire(path.join(fixtures, "nextjs-legacy"), { vibe: "boring" });
+    const pm = q.questions.find((x) => x.id === "packageManager");
+    expect(pm).toBeTruthy();
+    const ids = pm.options.map((o) => o.id);
+    expect(ids).toEqual(expect.arrayContaining(["npm", "pnpm", "yarn", "bun", "other"]));
+    expect(ids).not.toContain("pip");
+    expect(q.defaults.packageManager).toBeUndefined();
+  });
+
+  it("skips PM for empty repo", async () => {
+    const q = await buildQuestionnaire(path.join(fixtures, "empty-repo"));
+    expect(q.defaults.packageManager).toBeNull();
+    expect(q.questions.find((x) => x.id === "packageManager")).toBeUndefined();
+  });
+});
+
+describe("git-remote helpers", () => {
+  it("classifies forge URLs", () => {
+    expect(classifyRemoteUrl("git@github.com:org/repo.git")).toBe("github");
+    expect(classifyRemoteUrl("https://gitlab.com/org/repo.git")).toBe("gitlab");
+    expect(classifyRemoteUrl("https://bitbucket.org/org/repo.git")).toBe("bitbucket");
+    expect(classifyRemoteUrl(null)).toBeNull();
+  });
+
+  it("parses owner/repo", () => {
+    expect(repoNameFromRemote("git@github.com:smartSenseSolutions/aws-auto-tagger.git")).toBe(
+      "smartSenseSolutions/aws-auto-tagger",
+    );
+  });
+});
+
+describe("enrichWithExa", () => {
+  it("returns used:false when EXA_API_KEY is unset", async () => {
+    const prev = process.env.EXA_API_KEY;
+    delete process.env.EXA_API_KEY;
+    try {
+      const r = await enrichWithExa({ repoName: "example/repo" });
+      expect(r.used).toBe(false);
+    } finally {
+      if (prev !== undefined) process.env.EXA_API_KEY = prev;
+    }
   });
 });
