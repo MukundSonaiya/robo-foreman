@@ -1,0 +1,11 @@
+---
+description: Dependency discipline — pin the package manager and ask before adding deps
+alwaysApply: true
+---
+
+# dependencies
+
+- Use **{{package_manager}}** only (lockfile is source of truth).
+- Never add, upgrade, or remove dependencies without explicit user approval.
+- Prefer existing utilities in the repo over new packages.
+- When a dependency is approved, install with: `{{install_command}}`
