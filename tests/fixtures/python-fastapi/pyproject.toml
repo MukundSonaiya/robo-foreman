@@ -1,0 +1,6 @@
+[project]
+name = "demo-api"
+dependencies = ["fastapi>=0.115", "uvicorn"]
+
+[tool.uv]
+dev-dependencies = ["pytest"]

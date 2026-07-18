@@ -1,0 +1,6 @@
+---
+description: No AI slop
+alwaysApply: true
+---
+
+No unnecessary comments. No drive-by refactors. No dead code.

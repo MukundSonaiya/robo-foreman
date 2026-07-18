@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Foreman formatter hook — stack: {{stack_id}} / pm: {{package_manager}}
+set -euo pipefail
+input="$(cat || true)"
+# Best-effort format; never block the agent on formatter failure
+{{format_command}} >/dev/null 2>&1 || true
+exit 0

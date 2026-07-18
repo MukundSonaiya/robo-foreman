@@ -1,0 +1,29 @@
+{
+  "name": "robo-foreman",
+  "version": "0.1.0",
+  "description": "Cursor plugin that turns any project into an agentic-first workspace and helps you contribute to open-source repos.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "foreman": "./scripts/cli.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "foreman": "node ./scripts/cli.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  },
+  "license": "MIT",
+  "keywords": [
+    "cursor",
+    "plugin",
+    "agentic",
+    "oss",
+    "foreman"
+  ]
+}

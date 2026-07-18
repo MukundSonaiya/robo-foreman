@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/foreman-format.sh"
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/foreman-secret-guard.sh",
+        "matcher": "\\.(env|pem|key)$|secrets?/"
+      },
+      {
+        "command": ".cursor/hooks/foreman-pollution-guard.sh",
+        "matcher": "git (commit|add)|gh pr create|glab mr create"
+      }
+    ]
+  }
+}

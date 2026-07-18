@@ -1,0 +1,14 @@
+---
+description: Keep Robo Foreman plugin components valid while editing this repo
+alwaysApply: true
+---
+
+# Robo Foreman plugin quality
+
+When editing this plugin:
+
+1. Keep `.cursor-plugin/plugin.json` name as `robo-foreman` (kebab-case).
+2. Skills/commands/agents need YAML frontmatter with `name` + `description`.
+3. Prefer deterministic work in `scripts/` with vitest coverage.
+4. `/scan` reports must never invent letter grades or `/100` scores.
+5. Never teach users to put Foreman paths in a shared `.gitignore` for OSS — use `.git/info/exclude`.

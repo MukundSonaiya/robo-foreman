@@ -1,0 +1,6 @@
+---
+description: Coding standards
+alwaysApply: true
+---
+
+Use TypeScript. Prefer named exports. Keep PRs small.
