@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Robo Foreman">
+  <rect width="128" height="128" rx="24" fill="#1B3A4B"/>
+  <path d="M20 78 L64 28 L108 78 Z" fill="#E8A838"/>
+  <rect x="40" y="70" width="48" height="36" rx="6" fill="#F5F1E8"/>
+  <circle cx="52" cy="88" r="6" fill="#1B3A4B"/>
+  <circle cx="76" cy="88" r="6" fill="#1B3A4B"/>
+  <rect x="54" y="18" width="20" height="10" rx="2" fill="#C45C26"/>
+</svg>

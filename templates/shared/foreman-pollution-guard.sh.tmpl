@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Block committing/pushing Foreman pollution paths
+set -euo pipefail
+input="$(cat)"
+cmd="$(printf '%s' "$input" | sed -n 's/.*"command"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)"
+if printf '%s' "$cmd" | grep -Eq 'git (commit|add)|gh pr create|glab mr create'; then
+  if git diff --cached --name-only 2>/dev/null | grep -Eq '^\.foreman(/|$)' ; then
+    cat <<'EOF'
+{"continue":true,"permission":"deny","user_message":"Blocked: .foreman/ files are staged.","agent_message":"Unstage .foreman/** before committing. Foreman artifacts must not land in PRs (use .git/info/exclude)."}
+EOF
+    exit 0
+  fi
+fi
+printf '%s\n' '{"continue":true,"permission":"allow"}'
+exit 0

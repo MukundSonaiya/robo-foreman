@@ -1,0 +1,1 @@
+{ "name": "oss-widget", "scripts": { "test": "node test.js", "lint": "echo lint-ok" } }
