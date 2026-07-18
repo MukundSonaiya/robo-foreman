@@ -16,6 +16,8 @@ import { generateReport } from "./report.js";
 import { planBuild } from "./build-plan.js";
 import { ensureGitExclude } from "./git-exclude.js";
 import { listBackups, restoreBackup } from "./backup.js";
+import { applyBuild } from "./apply-build.js";
+import { listGoodFirstIssues } from "./issues.js";
 
 function argValue(args, name, fallback) {
   const i = args.indexOf(name);
@@ -90,6 +92,25 @@ async function main() {
     return;
   }
 
+  if (cmd === "build-apply") {
+    const dryRun = hasFlag(args, "--dry-run");
+    const oss = hasFlag(args, "--oss");
+    const result = await applyBuild(repo, { dryRun, oss });
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  if (cmd === "issues") {
+    const prefs = (await loadPreferences(repo)) || { vcs: "github", issues: "github-issues" };
+    const result = await listGoodFirstIssues(prefs, {
+      cwd: repo,
+      limit: Number(argValue(args, "--limit", "20")),
+      repo: argValue(args, "--remote-repo", undefined),
+    });
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
   if (cmd === "exclude") {
     const result = await ensureGitExclude(repo, { extraOss: hasFlag(args, "--oss") });
     console.log(JSON.stringify(result, null, 2));
@@ -107,7 +128,7 @@ async function main() {
     return;
   }
 
-  console.error(`Unknown command. Try: preferences | scan | build-plan | exclude | backup`);
+  console.error(`Unknown command. Try: preferences | scan | build-plan | build-apply | issues | exclude | backup`);
   process.exit(1);
 }
 
