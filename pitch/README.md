@@ -1,41 +1,29 @@
 # RoboForeman — Pitch Deck v2
 
-3-minute hackathon pitch for **AI for Everyday Experiences** (Team SmartSense).
-
-## Open on Mac
-
-| File | Use |
-|------|-----|
-| **`RoboForeman-Pitch-Keynote.pptx`** | Open with **Keynote** (recommended) |
-| **`RoboForeman-Pitch-Keynote.pdf`** | Open with **Preview** if PPTX fails |
-| `OPEN-IN-KEYNOTE.md` | Step-by-step + troubleshooting |
-
-1. Download `RoboForeman-Pitch-Keynote.pptx`
-2. Right-click → **Open With → Keynote**
-3. **File → Save** → native `.key`
-
-## Other files
+3-minute hackathon pitch for **Cursor Hackathon** (Team SmartSense).
 
 | File | Purpose |
 |------|---------|
-| `RoboForeman-Pitch-3min-v2.pptx` | Source build (pre-sanitize) |
+| `RoboForeman-Pitch-3min-v2.pptx` | Deck (upload to Google Drive / Slides) |
 | `SPEAKER-SCRIPT-3min.md` | Spoken script + timing |
 | `build_pitch_v2.py` | Regenerator |
 | `assets/` | Icons / demo placeholder |
 
 ## Story arc
 
-1. Hook — AI doesn’t know *your* project  
-2. Pain — Priya  
-3. Reframe — unbriefed AI  
-4. Demo — `/scan → /build → /contribute`  
-5. Differentiation  
-6. Under the hood + sponsors  
-7. Close  
+**Frame:** Cursor’s AI builds. Roboforeman briefs it. Everything happens inside Cursor.  
+**Truth:** You pick any open issue — Roboforeman does not find it; it + Cursor help you solve it.
+
+1. Hook — zero → first OSS contribution inside Cursor  
+2. Pain — developer + non-developer, both Cursor-powered, both stuck  
+3. Enter Roboforeman — you pick → learn rules → brief Cursor’s AI  
+4. Demo — pick → brief → build → clean PR  
+5. Differentiation — one foreman, OSS + your repo  
+6. Under the hood — skills · agent · hooks · Canvas + sponsors  
+7. Close — first PR is one command away  
 
 ## Regenerate
 
 ```bash
 python3 pitch/build_pitch_v2.py
-# requires LibreOffice (`soffice`) for the Keynote-safe export
 ```

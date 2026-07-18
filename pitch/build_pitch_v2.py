@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""Build RoboForeman 3-minute pitch deck v2 — minimal, Keynote-friendly PPTX.
-
-Keynote compatibility notes:
-- Mac-native fonts only (Helvetica Neue / Helvetica) — Calibri is Office-only
-- Plain rectangles instead of rounded-rect adjustments (import more reliably)
-- Standard 16:9 widescreen, embedded PNG assets, speaker notes preserved
-- Open in Keynote → File → Save to get a native .key on Mac
-"""
+"""Build RoboForeman 3-minute pitch deck v2 — minimal 16:9 PPTX."""
 
 from pathlib import Path
 
@@ -21,8 +14,6 @@ from lxml import etree
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "assets"
 OUT = ROOT / "RoboForeman-Pitch-3min-v2.pptx"
-# Simple name for Mac — avoid *.keynote.pptx (can confuse downloads / UTIs)
-OUT_KEYNOTE = ROOT / "RoboForeman-Pitch-Keynote.pptx"
 
 # ── Minimal palette (no purple) ─────────────────────────────────────────────
 INK = RGBColor(0x14, 0x14, 0x14)
@@ -41,7 +32,6 @@ BAD = RGBColor(0xA8, 0x3A, 0x2C)
 SLIDE_W = Inches(13.333)
 SLIDE_H = Inches(7.5)
 
-# Mac-native fonts — Keynote maps these without substitution
 FONT_DISPLAY = "Helvetica Neue"
 FONT_BODY = "Helvetica"
 
@@ -142,7 +132,7 @@ def add_rect(slide, left, top, width, height, fill=None, line=None, line_width_p
 
 
 def add_round_rect(slide, left, top, width, height, fill=None, line=None, line_width_pt=1):
-    """Use a plain rectangle — Keynote imports these more reliably than adjusted rounded rects."""
+    """Plain rectangle (rounded-rect alias kept for call sites)."""
     return add_rect(slide, left, top, width, height, fill=fill, line=line, line_width_pt=line_width_pt)
 
 
@@ -177,11 +167,8 @@ def notes(slide, text):
 def slide_1_title(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     fill_slide_bg(slide, CHAR)
-
-    # thin amber top rule
     add_rect(slide, 0, 0, SLIDE_W, Inches(0.08), fill=AMBER)
 
-    # mark
     if (ASSETS / "hardhat-mark.png").exists():
         slide.shapes.add_picture(
             str(ASSETS / "hardhat-mark.png"),
@@ -192,7 +179,7 @@ def slide_1_title(prs):
     eyebrow = add_textbox(slide, Inches(0.85), Inches(2.45), Inches(11), Inches(0.35))
     set_text(
         eyebrow,
-        [{"text": "TEAM SMARTSENSE  ·  AI FOR EVERYDAY EXPERIENCES", "size": 12, "bold": True, "color": AMBER, "font": FONT_BODY}],
+        [{"text": "TEAM SMARTSENSE  ·  CURSOR HACKATHON", "size": 12, "bold": True, "color": AMBER, "font": FONT_BODY}],
     )
 
     title = add_textbox(slide, Inches(0.85), Inches(2.9), Inches(11.5), Inches(1.1))
@@ -201,30 +188,37 @@ def slide_1_title(prs):
         [{"text": "roboforeman", "size": 60, "bold": True, "color": WHITE, "font": FONT_DISPLAY}],
     )
 
-    line = add_textbox(slide, Inches(0.85), Inches(4.15), Inches(11.2), Inches(1.2))
+    line = add_textbox(slide, Inches(0.85), Inches(4.15), Inches(11.2), Inches(1.3))
     set_text(
         line,
         [
             {
-                "text": "Your AI builds anything — it just doesn't know your project.",
-                "size": 26,
+                "text": "From zero to your first open-source contribution\n— right inside Cursor.",
+                "size": 24,
                 "color": RGBColor(0xD0, 0xD0, 0xC8),
                 "font": FONT_DISPLAY,
-                "italic": True,
             }
         ],
     )
 
-    sub = add_textbox(slide, Inches(0.85), Inches(5.55), Inches(11), Inches(0.4))
+    sub = add_textbox(slide, Inches(0.85), Inches(5.7), Inches(11.2), Inches(0.7))
     set_text(
         sub,
-        [{"text": "One scan. Agent-ready. Ready to contribute.", "size": 16, "color": FAINT, "font": FONT_BODY}],
+        [
+            {
+                "text": "Cursor's AI builds. Roboforeman briefs it. Doesn't replace Cursor — directs Cursor's agent.",
+                "size": 14,
+                "color": FAINT,
+                "font": FONT_BODY,
+            }
+        ],
     )
 
     notes(
         slide,
-        """AI can build almost anything now. But it doesn't know your project.
-Roboforeman fixes that — in two minutes. Let me show you.""",
+        """Everyone wants to contribute to open source. Almost nobody knows where to start.
+Roboforeman takes you from zero to your first real contribution — without ever leaving Cursor.
+Cursor's AI is the world-class builder. Roboforeman is the foreman who briefs it. Here's how.""",
     )
 
 
@@ -233,16 +227,16 @@ def slide_2_pain(prs):
     fill_slide_bg(slide)
     accent_bar(slide)
 
-    label = add_textbox(slide, Inches(0.7), Inches(0.75), Inches(4), Inches(0.3))
-    set_text(label, [{"text": "THE PROBLEM", "size": 12, "bold": True, "color": AMBER}])
+    label = add_textbox(slide, Inches(0.7), Inches(0.75), Inches(6), Inches(0.3))
+    set_text(label, [{"text": "THE SAME DESIRE", "size": 12, "bold": True, "color": AMBER}])
 
-    title = add_textbox(slide, Inches(0.7), Inches(1.15), Inches(11.8), Inches(1.0))
+    title = add_textbox(slide, Inches(0.7), Inches(1.1), Inches(11.8), Inches(0.7))
     set_text(
         title,
         [
             {
-                "text": "Meet Priya. Shipping a new feature.",
-                "size": 36,
+                "text": "Two people. Both supercharged by Cursor.",
+                "size": 30,
                 "bold": True,
                 "color": INK,
                 "font": FONT_DISPLAY,
@@ -250,61 +244,77 @@ def slide_2_pain(prs):
         ],
     )
 
-    # three failure chips — minimal, not card-heavy
-    fails = [
-        ("Wrong style", "Ignores how her project actually writes code"),
-        ("Fake commands", "Calls scripts that don't exist in the repo"),
-        ("Breaks working code", "Touches files it shouldn't — now she fixes the AI"),
+    # two character columns
+    chars = [
+        ("Developer", "Ships features daily in Cursor.\nStill freezes on a stranger's repo."),
+        ("Non-developer", "Cursor helps them build.\nStill lost in a huge stranger's repo."),
     ]
-    x0 = Inches(0.7)
-    gap = Inches(0.35)
-    w = Inches(3.85)
-    for i, (head, body) in enumerate(fails):
-        left = x0 + i * (w + gap)
-        add_rect(slide, left, Inches(2.7), Inches(0.08), Inches(2.2), fill=BAD)
-        h = add_textbox(slide, left + Inches(0.3), Inches(2.75), w - Inches(0.3), Inches(0.55))
-        set_text(h, [{"text": head, "size": 20, "bold": True, "color": INK, "font": FONT_DISPLAY}])
-        b = add_textbox(slide, left + Inches(0.3), Inches(3.4), w - Inches(0.35), Inches(1.3))
+    for i, (head, body) in enumerate(chars):
+        left = Inches(0.7) + i * Inches(6.2)
+        add_rect(slide, left, Inches(2.05), Inches(5.85), Inches(2.15), fill=SOFT)
+        add_rect(slide, left, Inches(2.05), Inches(0.08), Inches(2.15), fill=AMBER)
+        h = add_textbox(slide, left + Inches(0.35), Inches(2.2), Inches(5.2), Inches(0.45))
+        set_text(h, [{"text": head, "size": 22, "bold": True, "color": INK, "font": FONT_DISPLAY}])
+        badge = add_textbox(slide, left + Inches(0.35), Inches(2.65), Inches(5.2), Inches(0.35))
+        set_text(badge, [{"text": "Powered by Cursor", "size": 13, "bold": True, "color": AMBER}])
+        b = add_textbox(slide, left + Inches(0.35), Inches(3.1), Inches(5.2), Inches(0.9))
         set_text(b, [{"text": body, "size": 15, "color": MUTED}])
 
-    bottom = add_textbox(slide, Inches(0.7), Inches(5.6), Inches(11.8), Inches(0.7))
+    # shared emotional line
+    shared = add_textbox(slide, Inches(0.7), Inches(4.45), Inches(11.9), Inches(0.45))
     set_text(
-        bottom,
+        shared,
         [
             {
-                "text": "She's correcting the assistant instead of building. Every developer here has lived this.",
-                "size": 18,
+                "text": "Both want to contribute. Neither knows where to start.",
+                "size": 20,
+                "bold": True,
                 "italic": True,
                 "color": INK,
                 "font": FONT_DISPLAY,
             }
         ],
     )
+
+    fears = [
+        ("Where do I start?", "Hundreds of issues. No map."),
+        ("What if I break their rules?", "Maintainers close the PR."),
+        ("Huge, scary repo", "Thousands of files. Freeze."),
+    ]
+    for i, (head, body) in enumerate(fears):
+        left = Inches(0.7) + i * Inches(4.15)
+        add_rect(slide, left, Inches(5.1), Inches(0.08), Inches(1.35), fill=BAD)
+        h = add_textbox(slide, left + Inches(0.25), Inches(5.1), Inches(3.7), Inches(0.4))
+        set_text(h, [{"text": head, "size": 15, "bold": True, "color": INK, "font": FONT_DISPLAY}])
+        b = add_textbox(slide, left + Inches(0.25), Inches(5.55), Inches(3.7), Inches(0.7))
+        set_text(b, [{"text": body, "size": 14, "color": MUTED}])
+
     footer(slide, 2)
     notes(
         slide,
-        """This is Priya. She's got the smartest assistant in the world in her editor.
-She says "add the payment screen" — and it writes code that ignores her project's style,
-calls commands that don't exist, and breaks something that worked.
-Now she's fixing the AI instead of building. Every developer here has lived this.""",
+        """Meet two people — a developer and a non-developer. Both are supercharged by Cursor,
+the most amazing AI IDE today. Cursor already makes them formidable.
+But both of them — and almost everyone — want to contribute to open source.
+And almost nobody knows where to start. Open a real repo and you freeze: Where do I even start?
+What if I break their rules? Huge, scary codebase. That fear is the barrier — not their skill.""",
     )
 
 
-def slide_3_reframe(prs):
+def slide_3_enter(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     fill_slide_bg(slide)
     accent_bar(slide)
 
-    label = add_textbox(slide, Inches(0.7), Inches(0.75), Inches(4), Inches(0.3))
-    set_text(label, [{"text": "THE REFRAME", "size": 12, "bold": True, "color": AMBER}])
+    label = add_textbox(slide, Inches(0.7), Inches(0.75), Inches(6), Inches(0.3))
+    set_text(label, [{"text": "ENTER ROBOFOREMAN", "size": 12, "bold": True, "color": AMBER}])
 
-    title = add_textbox(slide, Inches(0.7), Inches(1.15), Inches(11.8), Inches(1.1))
+    title = add_textbox(slide, Inches(0.7), Inches(1.15), Inches(11.8), Inches(0.9))
     set_text(
         title,
         [
             {
-                "text": "The AI isn't dumb — it's unbriefed.",
-                "size": 36,
+                "text": "Roboforeman is your foreman — inside Cursor.",
+                "size": 30,
                 "bold": True,
                 "color": INK,
                 "font": FONT_DISPLAY,
@@ -312,35 +322,28 @@ def slide_3_reframe(prs):
         ],
     )
 
-    # metaphor mapping — clean two columns
-    left_items = [
-        ("No site map", "No AGENTS.md"),
-        ("No rulebook", "No .cursor/rules"),
-        ("No safety tape", "No hooks / .cursorignore"),
-        ("No crew habits", "No skills from your code"),
+    beats = [
+        ("01", "You pick any open issue", "Any task already open in the repo — your choice."),
+        ("02", "Learns the project's rulebook", "Contributing guide, conventions, how they ship."),
+        ("03", "Briefs Cursor's AI to build it", "Cursor's agent implements the fix — their way."),
     ]
+    for i, (num, head, body) in enumerate(beats):
+        top = Inches(2.35) + i * Inches(1.05)
+        n = add_textbox(slide, Inches(0.7), top, Inches(0.8), Inches(0.5))
+        set_text(n, [{"text": num, "size": 22, "bold": True, "color": AMBER, "font": FONT_DISPLAY}])
+        h = add_textbox(slide, Inches(1.7), top, Inches(10.5), Inches(0.45))
+        set_text(h, [{"text": head, "size": 22, "bold": True, "color": INK, "font": FONT_DISPLAY}])
+        b = add_textbox(slide, Inches(1.7), top + Inches(0.45), Inches(10.5), Inches(0.45))
+        set_text(b, [{"text": body, "size": 16, "color": MUTED}])
 
-    for i, (story, reality) in enumerate(left_items):
-        top = Inches(2.55) + i * Inches(0.7)
-        a = add_textbox(slide, Inches(0.7), top, Inches(5.2), Inches(0.55))
-        set_text(
-            a,
-            [
-                {"text": story, "size": 20, "bold": True, "color": INK, "font": FONT_DISPLAY, "space_after": 0},
-            ],
-        )
-        b = add_textbox(slide, Inches(6.2), top, Inches(6.2), Inches(0.55))
-        set_text(b, [{"text": reality, "size": 18, "color": MUTED}])
-
-    # punchline strip
-    add_rect(slide, Inches(0.7), Inches(5.55), Inches(11.9), Inches(0.9), fill=CHAR)
-    punch = add_textbox(slide, Inches(1.0), Inches(5.7), Inches(11.3), Inches(0.6))
+    add_rect(slide, Inches(0.7), Inches(5.7), Inches(11.9), Inches(0.8), fill=CHAR)
+    punch = add_textbox(slide, Inches(1.0), Inches(5.85), Inches(11.3), Inches(0.5))
     set_text(
         punch,
         [
             {
-                "text": "Roboforeman briefs it — so the builder stops guessing.",
-                "size": 22,
+                "text": "You choose the work. Roboforeman + Cursor help you ship it.",
+                "size": 18,
                 "bold": True,
                 "color": WHITE,
                 "font": FONT_DISPLAY,
@@ -351,10 +354,11 @@ def slide_3_reframe(prs):
     footer(slide, 3)
     notes(
         slide,
-        """But the AI isn't dumb — it's unbriefed. Drop a world-class builder on a site and tell them
-nothing, of course they guess wrong. That's Roboforeman's job: it walks your codebase, sees
-what's missing, and hands the AI the site map, the rulebook, the safety tape, and how your team
-actually does things. Watch it run.""",
+        """Roboforeman changes that. It's a Cursor plugin — it lives right in your editor.
+You pick any open issue or task in the repo. Roboforeman doesn't find it for you —
+you choose. Then it does the scary parts: reads the project's contributing guide and
+conventions, and briefs Cursor's own AI to build the fix their way.
+You're not alone in a giant repo anymore — you've got a foreman. Watch.""",
     )
 
 
@@ -363,16 +367,19 @@ def slide_4_demo(prs):
     fill_slide_bg(slide, CHAR)
     add_rect(slide, 0, 0, SLIDE_W, Inches(0.08), fill=AMBER)
 
-    label = add_textbox(slide, Inches(0.7), Inches(0.35), Inches(6), Inches(0.3))
-    set_text(label, [{"text": "DEMO  ·  6× FAST-FORWARD", "size": 12, "bold": True, "color": AMBER}])
+    label = add_textbox(slide, Inches(0.7), Inches(0.35), Inches(10), Inches(0.3))
+    set_text(
+        label,
+        [{"text": "DEMO  ·  INSIDE CURSOR  ·  6× FAST-FORWARD", "size": 12, "bold": True, "color": AMBER}],
+    )
 
-    title = add_textbox(slide, Inches(0.7), Inches(0.7), Inches(12), Inches(0.6))
+    title = add_textbox(slide, Inches(0.7), Inches(0.7), Inches(12), Inches(0.55))
     set_text(
         title,
         [
             {
-                "text": "/scan  →  /build  →  /contribute",
-                "size": 32,
+                "text": "pick issue  →  brief  →  build  →  clean PR",
+                "size": 26,
                 "bold": True,
                 "color": WHITE,
                 "font": FONT_DISPLAY,
@@ -380,15 +387,17 @@ def slide_4_demo(prs):
         ],
     )
 
-    # large video frame
-    frame_left, frame_top = Inches(0.7), Inches(1.5)
-    frame_w, frame_h = Inches(8.6), Inches(5.2)
-    add_round_rect(slide, frame_left, frame_top, frame_w, frame_h, fill=RGBColor(0x2A, 0x2A, 0x28), line=RGBColor(0x3A, 0x3A, 0x38))
+    frame_left, frame_top = Inches(0.7), Inches(1.45)
+    frame_w, frame_h = Inches(8.6), Inches(5.25)
+    add_round_rect(
+        slide, frame_left, frame_top, frame_w, frame_h,
+        fill=RGBColor(0x2A, 0x2A, 0x28), line=RGBColor(0x3A, 0x3A, 0x38),
+    )
 
     if (ASSETS / "play-badge.png").exists():
         slide.shapes.add_picture(
             str(ASSETS / "play-badge.png"),
-            Inches(4.35), Inches(3.4),
+            Inches(4.35), Inches(3.35),
             Inches(1.1), Inches(1.1),
         )
 
@@ -397,7 +406,7 @@ def slide_4_demo(prs):
         hint,
         [
             {
-                "text": "Drop your demo video here\nReplace this frame before the pitch",
+                "text": "Drop your Cursor demo video here\n(fallback stills: issue + draft PR)",
                 "size": 14,
                 "color": FAINT,
                 "align": PP_ALIGN.CENTER,
@@ -406,28 +415,28 @@ def slide_4_demo(prs):
         align=PP_ALIGN.CENTER,
     )
 
-    # right rail — what judges will see
     steps = [
-        ("01  /scan", "Stack detect + honest checklist"),
-        ("02  /build", "Rules, map, skills — backed up first"),
-        ("03  /contribute", "Issue → fix → draft PR, no pollution"),
+        ("01  You pick", "Any open issue / task in the repo"),
+        ("02  Brief", "Roboforeman learns their rulebook"),
+        ("03  Build", "Cursor's agent implements the fix"),
+        ("04  Clean PR", "Draft PR — no AI config in the diff"),
     ]
-    y = Inches(1.55)
+    y = Inches(1.45)
     for head, body in steps:
-        add_rect(slide, Inches(9.6), y, Inches(0.08), Inches(1.25), fill=AMBER)
-        h = add_textbox(slide, Inches(9.9), y, Inches(2.9), Inches(0.4))
-        set_text(h, [{"text": head, "size": 14, "bold": True, "color": AMBER}])
-        b = add_textbox(slide, Inches(9.9), y + Inches(0.4), Inches(2.9), Inches(0.7))
-        set_text(b, [{"text": body, "size": 14, "color": RGBColor(0xC8, 0xC8, 0xC0)}])
-        y += Inches(1.55)
+        add_rect(slide, Inches(9.6), y, Inches(0.08), Inches(1.05), fill=AMBER)
+        h = add_textbox(slide, Inches(9.9), y, Inches(2.9), Inches(0.35))
+        set_text(h, [{"text": head, "size": 13, "bold": True, "color": AMBER}])
+        b = add_textbox(slide, Inches(9.9), y + Inches(0.35), Inches(2.9), Inches(0.6))
+        set_text(b, [{"text": body, "size": 13, "color": RGBColor(0xC8, 0xC8, 0xC0)}])
+        y += Inches(1.25)
 
     notes(
         slide,
-        """One command — it inspects the repo with an honest checklist. No vibes.
-Second command — I tick what I want, hit Lock it in, and the crew works: rules, a project map,
-and skills learned from the repo's own code. Everything's backed up first — nothing overwritten.
-Then /contribute — pick a good-first-issue, solve it to definition-of-done, ship a draft PR
-with zero foreman files in the diff. Now the same request as before… and this time, the AI nails it.""",
+        """Everything here is happening inside Cursor. I pick an open issue in the repo — my choice.
+Roboforeman onboards: learns their setup, their commit style, their contributing rules.
+Then Cursor's agent implements the fix to their definition of done — tests, minimal diff.
+And it opens a clean draft pull request. Notice — none of my AI config leaked into the diff.
+That's guaranteed. You choose the work; Roboforeman and Cursor help you ship it.""",
     )
 
 
@@ -436,15 +445,15 @@ def slide_5_diff(prs):
     fill_slide_bg(slide)
     accent_bar(slide)
 
-    label = add_textbox(slide, Inches(0.7), Inches(0.75), Inches(6), Inches(0.3))
-    set_text(label, [{"text": "WHY NOT JUST PROMPT IT?", "size": 12, "bold": True, "color": AMBER}])
+    label = add_textbox(slide, Inches(0.7), Inches(0.75), Inches(8), Inches(0.3))
+    set_text(label, [{"text": "WHY NOT JUST PROMPT CURSOR?", "size": 12, "bold": True, "color": AMBER}])
 
-    title = add_textbox(slide, Inches(0.7), Inches(1.15), Inches(11.8), Inches(1.2))
+    title = add_textbox(slide, Inches(0.7), Inches(1.1), Inches(11.8), Inches(0.8))
     set_text(
         title,
         [
             {
-                "text": '"Can\'t I just make these files myself?"',
+                "text": '"Couldn\'t I just prompt this?"',
                 "size": 32,
                 "bold": True,
                 "color": INK,
@@ -454,39 +463,67 @@ def slide_5_diff(prs):
         ],
     )
 
-    # left: the trap
-    add_rect(slide, Inches(0.7), Inches(2.7), Inches(5.7), Inches(3.2), fill=SOFT)
-    left_t = add_textbox(slide, Inches(1.05), Inches(3.0), Inches(5.0), Inches(2.6))
+    hard = add_textbox(slide, Inches(0.7), Inches(2.0), Inches(11.9), Inches(0.55))
     set_text(
-        left_t,
+        hard,
         [
-            {"text": "Sure — once.", "size": 22, "bold": True, "color": INK, "font": FONT_DISPLAY, "space_after": 12},
-            {"text": "For one repo.", "size": 18, "color": MUTED, "space_after": 8},
-            {"text": "If you remember every rule,", "size": 18, "color": MUTED, "space_after": 8},
-            {"text": "every time — and never commit a secret.", "size": 18, "color": MUTED},
+            {
+                "text": "Matching their rules + a PR that passes review = the hard part.",
+                "size": 18,
+                "color": MUTED,
+                "font": FONT_DISPLAY,
+            }
         ],
     )
 
-    # right: the answer
-    add_rect(slide, Inches(6.85), Inches(2.7), Inches(5.7), Inches(3.2), fill=CHAR)
-    right_t = add_textbox(slide, Inches(7.2), Inches(3.0), Inches(5.0), Inches(2.6))
+    # left: prompt trap
+    add_rect(slide, Inches(0.7), Inches(2.75), Inches(5.7), Inches(2.85), fill=SOFT)
+    left_t = add_textbox(slide, Inches(1.05), Inches(3.0), Inches(5.0), Inches(2.4))
+    set_text(
+        left_t,
+        [
+            {"text": "Prompting bits", "size": 20, "bold": True, "color": INK, "font": FONT_DISPLAY, "space_after": 12},
+            {"text": "Sure — you can ask Cursor pieces.", "size": 16, "color": MUTED, "space_after": 8},
+            {"text": "Remember every convention,", "size": 16, "color": MUTED, "space_after": 8},
+            {"text": "every time — and never leak config.", "size": 16, "color": MUTED},
+        ],
+    )
+
+    # right: foreman
+    add_rect(slide, Inches(6.85), Inches(2.75), Inches(5.7), Inches(2.85), fill=CHAR)
+    right_t = add_textbox(slide, Inches(7.2), Inches(3.0), Inches(5.0), Inches(2.4))
     set_text(
         right_t,
         [
-            {"text": "Roboforeman", "size": 22, "bold": True, "color": AMBER, "font": FONT_DISPLAY, "space_after": 14},
-            {"text": "instantly  ·  identically", "size": 18, "color": WHITE, "space_after": 8},
-            {"text": "safely  ·  on every repo", "size": 18, "color": WHITE, "space_after": 8},
-            {"text": "including open-source you don't own", "size": 16, "color": FAINT},
+            {"text": "One foreman, any site", "size": 20, "bold": True, "color": AMBER, "font": FONT_DISPLAY, "space_after": 12},
+            {"text": "OSS contribution — their rules", "size": 16, "color": WHITE, "space_after": 8},
+            {"text": "Your own repo — same briefing", "size": 16, "color": WHITE, "space_after": 8},
+            {"text": "Always directing Cursor's agent", "size": 15, "color": FAINT},
+        ],
+    )
+
+    bottom = add_textbox(slide, Inches(0.7), Inches(5.9), Inches(11.9), Inches(0.55))
+    set_text(
+        bottom,
+        [
+            {
+                "text": "Same foreman also preps your own repo — so you build features faster inside Cursor.",
+                "size": 16,
+                "italic": True,
+                "color": INK,
+                "font": FONT_DISPLAY,
+            }
         ],
     )
 
     footer(slide, 5)
     notes(
         slide,
-        """Now engineers are thinking — I could just make those files myself. You could. Once. For one
-repo. If you remember every rule every time and never commit a secret. Roboforeman does it
-instantly, the same way, on every project — and never forgets the safety tape. On open-source,
-it won't even pollute your PR. That's automation — not a prompt you retype.""",
+        """Could you prompt Cursor to do bits of this? Sure. But matching a stranger's conventions
+and shipping a PR that actually passes review — consistently — that's the hard part,
+and that's the automation. You pick the issue; Roboforeman briefs Cursor's agent to solve it.
+And the same foreman works on your own repo too: point it at your project and it briefs
+Cursor's AI so you build features faster. One foreman, any site.""",
     )
 
 
@@ -498,13 +535,13 @@ def slide_6_hood(prs):
     label = add_textbox(slide, Inches(0.7), Inches(0.75), Inches(6), Inches(0.3))
     set_text(label, [{"text": "UNDER THE HOOD", "size": 12, "bold": True, "color": AMBER}])
 
-    title = add_textbox(slide, Inches(0.7), Inches(1.15), Inches(11.8), Inches(0.9))
+    title = add_textbox(slide, Inches(0.7), Inches(1.15), Inches(11.8), Inches(0.7))
     set_text(
         title,
         [
             {
                 "text": "Fun on top. Real engineering underneath.",
-                "size": 32,
+                "size": 28,
                 "bold": True,
                 "color": INK,
                 "font": FONT_DISPLAY,
@@ -512,37 +549,49 @@ def slide_6_hood(prs):
         ],
     )
 
-    # two pillars
+    built = add_textbox(slide, Inches(0.7), Inches(1.95), Inches(11.9), Inches(0.4))
+    set_text(
+        built,
+        [
+            {
+                "text": "Built ON Cursor:  skills  ·  agent  ·  hooks  ·  Canvas",
+                "size": 18,
+                "bold": True,
+                "color": AMBER,
+                "font": FONT_DISPLAY,
+            }
+        ],
+    )
+
     pillars = [
         (
-            "AI for judgment",
+            "AI judgment",
             [
-                "Reads your code — and your CONTRIBUTING.md",
-                "Mines skills from real exemplar files",
+                "Cursor's agent reads code + CONTRIBUTING",
                 "Exa → live stack docs, not stale guesses",
+                "Briefs the builder — doesn't replace it",
             ],
         ),
         (
-            "Deterministic for trust",
+            "Deterministic trust",
             [
-                "Tested detection & merge scripts",
                 "Never-clobber + one-command undo",
-                "No-pollution guards on OSS PRs",
+                "No AI-config pollution on OSS PRs",
+                "Tested detection & merge plumbing",
             ],
         ),
     ]
     for i, (head, bullets) in enumerate(pillars):
         left = Inches(0.7) + i * Inches(6.2)
-        add_rect(slide, left, Inches(2.35), Inches(0.08), Inches(2.8), fill=AMBER)
-        h = add_textbox(slide, left + Inches(0.3), Inches(2.35), Inches(5.5), Inches(0.5))
+        add_rect(slide, left, Inches(2.55), Inches(0.08), Inches(2.5), fill=AMBER)
+        h = add_textbox(slide, left + Inches(0.3), Inches(2.55), Inches(5.5), Inches(0.45))
         set_text(h, [{"text": head, "size": 20, "bold": True, "color": INK, "font": FONT_DISPLAY}])
         for j, b in enumerate(bullets):
-            t = add_textbox(slide, left + Inches(0.3), Inches(3.05) + j * Inches(0.55), Inches(5.5), Inches(0.5))
-            set_text(t, [{"text": b, "size": 16, "color": MUTED}])
+            t = add_textbox(slide, left + Inches(0.3), Inches(3.15) + j * Inches(0.5), Inches(5.5), Inches(0.45))
+            set_text(t, [{"text": b, "size": 15, "color": MUTED}])
 
-    # sponsors — quiet strip
-    add_rect(slide, Inches(0.7), Inches(5.6), Inches(11.9), Inches(0.85), fill=SOFT)
-    sp = add_textbox(slide, Inches(1.0), Inches(5.75), Inches(11.3), Inches(0.55))
+    add_rect(slide, Inches(0.7), Inches(5.5), Inches(11.9), Inches(0.95), fill=SOFT)
+    sp = add_textbox(slide, Inches(1.0), Inches(5.65), Inches(11.3), Inches(0.65))
     set_text(
         sp,
         [
@@ -559,11 +608,10 @@ def slide_6_hood(prs):
     footer(slide, 6)
     notes(
         slide,
-        """Under the cartoon it's a real, standard Cursor plugin. The decisions are AI — it reads your
-code and, with Exa, your stack's live docs. The plumbing is deterministic — tested detection,
-never overwrites your files, one-command undo, and triple protection so foreman files never
-land in an OSS PR. We even gave the foreman a voice with ElevenLabs.
-Judgment where you want AI; trust where you want safety.""",
+        """Under the cartoon, it's a real, standard Cursor plugin — built on Cursor's own skills,
+agent, hooks, and Canvas. The decisions are AI, reading the project's live docs with Exa;
+the plumbing is deterministic and never-destructive. We even gave the foreman a voice
+with ElevenLabs. Cursor does the building — Roboforeman makes sure it builds the right thing.""",
     )
 
 
@@ -575,17 +623,17 @@ def slide_7_close(prs):
     if (ASSETS / "hardhat-mark.png").exists():
         slide.shapes.add_picture(
             str(ASSETS / "hardhat-mark.png"),
-            Inches(6.25), Inches(1.35),
+            Inches(6.25), Inches(1.2),
             Inches(0.85), Inches(0.85),
         )
 
-    title = add_textbox(slide, Inches(0.8), Inches(2.5), Inches(11.7), Inches(1.2))
+    title = add_textbox(slide, Inches(0.8), Inches(2.3), Inches(11.7), Inches(1.3))
     set_text(
         title,
         [
             {
-                "text": "Can we fix your repo? Yes we can.",
-                "size": 36,
+                "text": "Your first open-source PR\nis one command away.",
+                "size": 34,
                 "bold": True,
                 "color": WHITE,
                 "font": FONT_DISPLAY,
@@ -595,27 +643,13 @@ def slide_7_close(prs):
         align=PP_ALIGN.CENTER,
     )
 
-    sub = add_textbox(slide, Inches(1.5), Inches(3.85), Inches(10.3), Inches(0.9))
+    catch = add_textbox(slide, Inches(0.8), Inches(3.9), Inches(11.7), Inches(0.55))
     set_text(
-        sub,
+        catch,
         [
             {
-                "text": "Brief your AI. Build your features.\nContribute to open source — without the setup tax.",
-                "size": 18,
-                "color": RGBColor(0xC8, 0xC8, 0xC0),
-                "align": PP_ALIGN.CENTER,
-            }
-        ],
-        align=PP_ALIGN.CENTER,
-    )
-
-    brand = add_textbox(slide, Inches(0.8), Inches(5.3), Inches(11.7), Inches(0.5))
-    set_text(
-        brand,
-        [
-            {
-                "text": "roboforeman",
-                "size": 20,
+                "text": "Can we fix your repo? Yes we can.",
+                "size": 22,
                 "bold": True,
                 "color": AMBER,
                 "font": FONT_DISPLAY,
@@ -625,7 +659,37 @@ def slide_7_close(prs):
         align=PP_ALIGN.CENTER,
     )
 
-    thanks = add_textbox(slide, Inches(0.8), Inches(6.1), Inches(11.7), Inches(0.4))
+    sub = add_textbox(slide, Inches(1.2), Inches(4.7), Inches(10.9), Inches(0.7))
+    set_text(
+        sub,
+        [
+            {
+                "text": "You pick the issue. Roboforeman briefs Cursor's agent.\nEverything happens inside Cursor.",
+                "size": 16,
+                "color": RGBColor(0xC8, 0xC8, 0xC0),
+                "align": PP_ALIGN.CENTER,
+            }
+        ],
+        align=PP_ALIGN.CENTER,
+    )
+
+    brand = add_textbox(slide, Inches(0.8), Inches(5.7), Inches(11.7), Inches(0.4))
+    set_text(
+        brand,
+        [
+            {
+                "text": "roboforeman",
+                "size": 18,
+                "bold": True,
+                "color": AMBER,
+                "font": FONT_DISPLAY,
+                "align": PP_ALIGN.CENTER,
+            }
+        ],
+        align=PP_ALIGN.CENTER,
+    )
+
+    thanks = add_textbox(slide, Inches(0.8), Inches(6.25), Inches(11.7), Inches(0.35))
     set_text(
         thanks,
         [
@@ -641,14 +705,14 @@ def slide_7_close(prs):
 
     notes(
         slide,
-        """AI can build anything — it just needed to know your project. Now it does.
-Point it at your repo or any open-source giant — scan, build, contribute.
-Can we fix your repo? Yes we can. Thank you.""",
+        """Open source shouldn't be scary. With Roboforeman and Cursor, your first contribution
+is one command away. You pick any open issue — Roboforeman briefs Cursor's agent to solve it.
+Can we fix it? Yes we can. Thank you.""",
     )
 
 
 def fix_widescreen_sldsz(prs):
-    """python-pptx leaves type='screen4x3' even after resizing — Keynote rejects that mismatch."""
+    """python-pptx leaves type='screen4x3' even after resizing — fix to match 16:9."""
     sldSz = prs.part._element.find(
         "{http://schemas.openxmlformats.org/presentationml/2006/main}sldSz"
     )
@@ -656,35 +720,6 @@ def fix_widescreen_sldsz(prs):
         sldSz.set("cx", str(int(SLIDE_W)))
         sldSz.set("cy", str(int(SLIDE_H)))
         sldSz.set("type", "screen16x9")
-
-
-def sanitize_via_libreoffice(src: Path, dest: Path) -> bool:
-    """Round-trip through LibreOffice for a stricter OOXML Keynote accepts."""
-    import shutil
-    import subprocess
-    import tempfile
-
-    if not shutil.which("soffice"):
-        return False
-    with tempfile.TemporaryDirectory() as td:
-        td_path = Path(td)
-        result = subprocess.run(
-            ["soffice", "--headless", "--convert-to", "pptx", "--outdir", str(td_path), str(src)],
-            capture_output=True,
-            text=True,
-        )
-        if result.returncode != 0:
-            print("LibreOffice sanitize failed:", result.stderr)
-            return False
-        produced = next(td_path.glob("*.pptx"), None)
-        if not produced:
-            return False
-        # Re-apply widescreen type after LO (it drops type entirely — also fine,
-        # but screen16x9 is explicit and Keynote-friendly)
-        prs = Presentation(str(produced))
-        fix_widescreen_sldsz(prs)
-        prs.save(str(dest))
-        return True
 
 
 def main():
@@ -695,30 +730,14 @@ def main():
 
     slide_1_title(prs)
     slide_2_pain(prs)
-    slide_3_reframe(prs)
+    slide_3_enter(prs)
     slide_4_demo(prs)
     slide_5_diff(prs)
     slide_6_hood(prs)
     slide_7_close(prs)
 
     prs.save(OUT)
-    print(f"Wrote {OUT}")
-
-    # Keynote build: LibreOffice-sanitized OOXML (fixes invalid format errors)
-    if sanitize_via_libreoffice(OUT, OUT_KEYNOTE):
-        print(f"Wrote Keynote-safe {OUT_KEYNOTE}")
-    else:
-        # Fallback: same file with sldSz already fixed
-        prs.save(OUT_KEYNOTE)
-        print(f"Wrote {OUT_KEYNOTE} (no LibreOffice sanitize)")
-
-    # Verify
-    check = Presentation(str(OUT_KEYNOTE))
-    sldSz = check.part._element.find(
-        "{http://schemas.openxmlformats.org/presentationml/2006/main}sldSz"
-    )
-    print(f"Verified sldSz: {dict(sldSz.attrib) if sldSz is not None else None}")
-    print(f"Slides: {len(check.slides)}")
+    print(f"Wrote {OUT} ({len(prs.slides)} slides)")
 
 
 if __name__ == "__main__":

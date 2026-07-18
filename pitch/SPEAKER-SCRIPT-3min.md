@@ -1,73 +1,81 @@
 # RoboForeman — 3-Minute Pitch Script (v2)
 
 Companion to `RoboForeman-Pitch-3min-v2.pptx`.  
-On-screen text is sparse; **this script carries the talk**. Total ≈ **2:55** including the fast-forward demo.
+On-screen text is sparse; **this script carries the talk**. Total ≈ **2:50** including the demo.
+
+**Frame:** Cursor’s AI is the world-class builder. Roboforeman is the foreman who briefs it.  
+Doesn’t replace Cursor — directs Cursor’s agent. Everything happens **inside Cursor**.
+
+**Product truth:** You pick any open issue/task. Roboforeman does **not** find the issue — it + Cursor help you solve it.
 
 **Buffer tips**
 - If the demo runs long → cut Slide 5’s last sentence.
-- If rushing → **do not cut** the differentiation line on Slide 5 (judges are waiting for it).
+- If rushing → **do not cut** the differentiation line on Slide 5.
+- Keep “inside Cursor” / “Cursor’s agent” — scores **Effective Use of AI & Cursor**.
 
 ---
 
 ## Slide 1 — Title (~12s)
 
-> AI can build almost anything now. But it doesn't know *your* project.  
-> Roboforeman fixes that — in two minutes. Let me show you.
+> Everyone wants to contribute to open source. Almost nobody knows where to start.  
+> Roboforeman takes you from zero to your first real contribution — without ever leaving Cursor.  
+> Cursor’s AI is the world-class builder. Roboforeman is the foreman who briefs it. Here’s how.
 
 ---
 
-## Slide 2 — The pain (~25s)
+## Slide 2 — Two characters (~28s)
 
-> This is Priya. She's got the smartest assistant in the world in her editor.  
-> She says "add the payment screen" — and it writes code that ignores her project's style, calls commands that don't exist, and breaks something that worked.  
-> Now she's fixing the AI instead of building. Every developer here has lived this.
-
----
-
-## Slide 3 — The reframe (~28s)
-
-> But the AI isn't dumb — it's *unbriefed*.  
-> Drop a world-class builder on a site and tell them nothing, of course they guess wrong.  
-> That's Roboforeman's job: it walks your codebase, sees what's missing, and hands the AI the site map, the rulebook, the safety tape, and how your team actually does things.  
-> Watch it run.
+> Meet two people — a developer and a non-developer. Both are supercharged by Cursor, the most amazing AI IDE today.  
+> Cursor already makes them formidable. But both of them — and almost everyone — want to contribute to open source.  
+> And almost nobody knows where to start. Open a real repo and you freeze: Where do I even start? What if I break their rules? Huge, scary codebase.  
+> That fear is the barrier — not their skill.
 
 ---
 
-## Slide 4 — Demo video (~45–50s)
+## Slide 3 — Enter Roboforeman (~28s)
 
-*Narrate over the fast-forward video. Slide has a drop-in frame for the recording.*
-
-> One command — `/scan` — it inspects the repo with an honest checklist. No vibes.  
-> Second — `/build` — I tick what I want, hit *Lock it in*, and the crew works: rules, a project map, and skills learned from the repo's *own* code. Backed up first. Nothing overwritten.  
-> Then `/contribute` — pick a good-first-issue, solve it to definition-of-done, ship a draft PR with **zero** foreman files in the diff.  
-> Same request as before… and this time, the AI nails it.
+> Roboforeman changes that. It’s a Cursor plugin — it lives right in your editor.  
+> You pick any open issue or task in the repo. Roboforeman doesn’t find it for you — *you* choose.  
+> Then it does the scary parts: reads the project’s contributing guide and conventions, and briefs Cursor’s own AI to build the fix their way.  
+> You’re not alone in a giant repo anymore — you’ve got a foreman. Watch.
 
 ---
 
-## Slide 5 — Differentiation (~25s) — *do not cut*
+## Slide 4 — Demo inside Cursor (~45s)
 
-> Now engineers are thinking — *I could just make those files myself.*  
-> You could. Once. For one repo. If you remember every rule every time and never commit a secret.  
-> Roboforeman does it instantly, the same way, on every project — and never forgets the safety tape.  
-> On open-source, it won't even pollute your PR. That's automation — not a prompt you retype.
+*Narrate over fast-forward Cursor screen recording. Fallback stills: open issue + draft PR.*
+
+> Everything here is happening inside Cursor. I pick an open issue in the repo — my choice.  
+> Roboforeman onboards: learns their setup, their commit style, their contributing rules.  
+> Then Cursor’s agent implements the fix to their definition of done.  
+> And it opens a clean draft pull request. Notice — none of my AI config leaked into the diff. That’s guaranteed.  
+> You choose the work; Roboforeman and Cursor help you ship it.
 
 ---
 
-## Slide 6 — Under the hood (~25–30s)
+## Slide 5 — Differentiation + two sites (~25s) — *do not cut*
 
-> Under the cartoon it's a real, standard Cursor plugin.  
-> The *decisions* are AI — it reads your code and, with Exa, your stack's live docs.  
-> The *plumbing* is deterministic — tested detection, never overwrites your files, one-command undo, and triple protection so foreman files never land in an OSS PR.  
+> Could you prompt Cursor to do bits of this? Sure.  
+> But matching a stranger’s conventions and shipping a PR that actually passes review — consistently — that’s the hard part, and that’s the automation.  
+> You pick the issue; Roboforeman briefs Cursor’s agent to solve it.  
+> And the same foreman works on your own repo too — so you build features faster. One foreman, any site.
+
+---
+
+## Slide 6 — Under the hood (~30s)
+
+> Under the cartoon, it’s a real, standard Cursor plugin — built on Cursor’s own skills, agent, hooks, and Canvas.  
+> The decisions are AI, reading the project’s live docs with Exa; the plumbing is deterministic and never-destructive.  
 > We even gave the foreman a voice with ElevenLabs.  
-> Judgment where you want AI; trust where you want safety.
+> Cursor does the building — Roboforeman makes sure it builds the right thing.
 
 ---
 
 ## Slide 7 — Close (~12s)
 
-> AI can build anything — it just needed to know your project. Now it does.  
-> Point it at your repo or any open-source giant — scan, build, contribute.  
-> Can we fix your repo? *Yes we can.* Thank you.
+> Open source shouldn’t be scary. With Roboforeman and Cursor, your first contribution is one command away.  
+> You pick any open issue — Roboforeman briefs Cursor’s agent to solve it.  
+> Can we fix it? *Yes we can.* Thank you.
 
 ---
 
@@ -75,18 +83,22 @@ On-screen text is sparse; **this script carries the talk**. Total ≈ **2:55** i
 
 | Slide | Beat | Time |
 |-------|------|------|
-| 1 | Title / hook | ~12s |
-| 2 | The pain (Priya) | ~25s |
-| 3 | Reframe + enter Roboforeman | ~28s |
-| 4 | ▶ Demo (fast-forward) | ~45–50s |
-| 5 | Differentiation | ~25s |
-| 6 | Under the hood + sponsors | ~25–30s |
+| 1 | Title / OSS hook | ~12s |
+| 2 | Dev + non-dev (Cursor-powered) | ~28s |
+| 3 | Enter Roboforeman (you pick → brief → build) | ~28s |
+| 4 | ▶ Demo inside Cursor | ~45s |
+| 5 | Differentiation + two sites | ~25s |
+| 6 | Under the hood + sponsors | ~30s |
 | 7 | Close | ~12s |
-| | **Total** | **~2:55** |
+| | **Total** | **~2:50** |
 
-## Design notes (v2 vs v1)
+## Judging-criteria coverage
 
-- **No purple** — charcoal + amber accent, light content slides.
-- **Sparse copy** — storyline from team feedback; script in speaker notes.
-- **Demo-first** — large video drop-in frame; flow is `/scan → /build → /contribute`.
-- **OSS no-pollution** called out on Slides 4–6 (maintainers care).
+| Criterion | Carried by |
+|-----------|------------|
+| Innovation & Creativity | Slides 3, 5 (guided contribution; one foreman, two sites) |
+| Technical Implementation + Code Quality | Slide 6 |
+| Effective Use of AI & Cursor | Slides 3, 4, 6 (agent / skills / hooks / Canvas + Exa) |
+| User Experience + Demo | Slide 4 |
+| Impact | Slides 2, 7 (lowers the barrier for newcomers) |
+| Completeness | Slide 4 (pick → brief → build → clean PR) |
